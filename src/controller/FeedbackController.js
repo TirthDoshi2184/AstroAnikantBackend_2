@@ -3,6 +3,7 @@ const Feedback = require('../models/Feedback');
 // @desc    Submit new feedback
 // @route   POST /api/feedback/submit
 // @access  Public
+//nothing changed here
 exports.submitFeedback = async (req, res) => {
   try {
     const { email, feedback } = req.body;

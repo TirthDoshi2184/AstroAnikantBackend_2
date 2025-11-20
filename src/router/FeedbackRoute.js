@@ -13,6 +13,7 @@ const {
 // const { protect, authorize } = require('../middleware/auth');
 
 // Public route
+// nothing changed here
 router.post('/submit', submitFeedback);
 
 // Admin routes (add authentication middleware)

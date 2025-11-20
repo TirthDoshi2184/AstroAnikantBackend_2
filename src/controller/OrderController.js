@@ -437,6 +437,7 @@ const getAllOrder = async (req, res) => {
 
 const getSingleOrder = async (req, res) => {
     const id = req.params.id;   
+    // console.log("Requested Order ID:", id);
 
     try {
         // Fetch order and populate the necessary fields

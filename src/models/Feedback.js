@@ -45,6 +45,7 @@ const feedbackSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
+// nothing changed here
 feedbackSchema.index({ email: 1, createdAt: -1 });
 feedbackSchema.index({ status: 1 });
 

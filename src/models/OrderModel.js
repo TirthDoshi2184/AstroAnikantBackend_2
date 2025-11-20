@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
+// Define the Order schema
 
 const OrderSchema = new Schema({
     cart: { 
