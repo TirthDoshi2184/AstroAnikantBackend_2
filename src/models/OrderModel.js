@@ -1,24 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
-const Order = {
+const OrderSchema = new Schema({
     cart: { 
         type: Schema.Types.ObjectId,
         ref: "Cart"
     },
     order_dt:{
-        type:Date,
-        default:Date.now
+        type: Date,
+        default: Date.now
     },
     status:{
-        type:String,
-        default:"Pending",
-        required:true
+        type: String,
+        default: "Pending",
+        required: true
     },
     typeOfPayment:{
-        type:String
+        type: String
     },
-    // ADD THESE NEW FIELDS FOR SHIPROCKET
     shipment: {
         shiprocket_order_id: String,
         shipment_id: String,
@@ -46,5 +45,6 @@ const Order = {
         pincode: String,
         phone: String
     }
-}
-module.exports = mongoose.model('Order', Order);
+});
+
+module.exports = mongoose.model('Order', OrderSchema);

@@ -630,6 +630,46 @@ const getUserOrders = async (req, res) => {
         });
     }
 };
+
+const updateOrderStatus = async (req, res) => {
+    
+    const id = req.params.id;
+    
+    try {   
+        console.log('Updating order ID:', id, 'to status:', req.body.status);
+        const order = await orderSchema.findByIdAndUpdate(
+            id,
+            { status: req.body.status },
+            { new: true }
+        ).populate({
+            path: "cart",
+            populate: [
+                { path: "user" },
+                { 
+                    path: "items.product",
+                    select: "name price images description slug category stock discountedPrice"
+                }
+            ]
+        });
+
+        if (order) {
+            res.status(200).json({
+                data: order,
+                message: 'Order status updated successfully'
+            });
+        } else {
+            res.status(404).json({
+                message: 'Order not found'
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Server Error",
+            error: err.message,
+        });
+    }
+};
 // ADD THESE NEW FUNCTIONS TO YOUR CONTROLLER:
 
 
@@ -697,5 +737,6 @@ module.exports = {
     deleteOrder,
     getUserOrders,
     assignCourier,    // ADD THIS
-    trackOrder        // ADD THIS
+    trackOrder,        // ADD THIS
+    updateOrderStatus // ADD THIS
 };

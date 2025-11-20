@@ -41,6 +41,7 @@ const productRequestRoutes = require("./src/router/ProductRequestRoutes")
 const wishlistRoutes = require("./src/router/WishlistRoutes")
 const donationRoutes = require("./src/router/DonationRoutes")
 const reviewRoutes = require("./src/router/ReviewRoute")
+const feedbackRoutes = require("./src/router/FeedbackRoute")
 
 
 app.use("/user", userRoutes)
@@ -55,6 +56,7 @@ app.use("/productrequest", productRequestRoutes)
 app.use("/wishlist", wishlistRoutes)
 app.use("/donation", donationRoutes)
 app.use("/review", reviewRoutes)
+app.use("/feedback", feedbackRoutes)
 
 
 

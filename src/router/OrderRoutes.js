@@ -8,6 +8,7 @@ router.get("/deleteorder/:id",orderController.deleteOrder)
 router.get('/user/:userId', orderController.getUserOrders);
 router.post('/assign-courier', orderController.assignCourier);
 router.get('/track/:orderId', orderController.trackOrder);
+router.put('/update-status/:id', orderController.updateOrderStatus);
 // Add this to your order routes for testing
 router.get('/shiprocket-status', (req, res) => {
     const shipRocketService = require('../service/ShipRocket');
