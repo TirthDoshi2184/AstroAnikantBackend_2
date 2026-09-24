@@ -27,8 +27,7 @@ const createOrder = async (req, res) => {
         }
 
         // Update cart status
-        await cartSchema.findByIdAndUpdate(req.body.cart, { status: "Ordered" });
-        
+        await cartSchema.findByIdAndUpdate(req.body.cart, { status: 'ordered' });
         // Populate the cart with user and product details
         const populatedOrder = await orderSchema.findById(response._id)
             .populate({
@@ -414,7 +413,7 @@ const getAllOrder = async (req, res) => {
         const order = await orderSchema.find().populate({
             path: "cart",
             populate: [
-                { path: "user" },
+               { path: 'user', select: 'name email phone' },
                 { 
                     path: "items.product",
                     select: "name price images description slug category stock discountedPrice"
@@ -444,7 +443,7 @@ const getSingleOrder = async (req, res) => {
         const order = await orderSchema.findById(id).populate({
             path: "cart",
             populate: [
-                { path: "user" },
+                { path: 'user', select: 'name email phone' },
                 { path: "items.product" }
             ]
         });
@@ -477,7 +476,7 @@ const deleteOrder = async (req, res) => {
         
         if (deleteOrder) {
             // Optional: Update cart status back to "In Cart" when order is deleted
-            await cartSchema.findByIdAndUpdate(deleteOrder.cart, { status: "In Cart" });
+            await cartSchema.findByIdAndUpdate(deleteOrder.cart, { status: "active" });
             
             res.status(200).json({
                 data: deleteOrder,
@@ -582,55 +581,36 @@ const deleteOrder = async (req, res) => {
 
 // }
 const getUserOrders = async (req, res) => {
-    const userId = req.params.userId;
-    console.log('Requested userId:', userId);
-    
+    const { userId } = req.params
+ 
     try {
-        // First, get all orders without population
-        const allOrders = await orderSchema.find();
-        console.log('Total orders in database:', allOrders.length);
-        
-        // Now populate them
-        const populatedOrders = await orderSchema.find()
-            .populate({
-                path: "cart",
-                populate: [
-                    { path: "user" },
-                    { 
-                        path: "items.product",
-                        select: "name price images description shortDescription discountedPrice"
-                    }
-                ]
-            });
-
-        console.log('Populated orders:', populatedOrders.length);
-        
-        // Check the structure
-        if (populatedOrders.length > 0) {
-            console.log('Sample order structure:', JSON.stringify(populatedOrders[0], null, 2));
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user id' })
         }
-
-        // Filter for user
-        const filteredOrders = populatedOrders.filter(order => {
-            const orderUserId = order?.cart?.user?._id?.toString();
-            console.log('Order user ID:', orderUserId, 'Requested user ID:', userId);
-            return orderUserId === userId;
-        });
-
-        console.log('Filtered orders for user:', filteredOrders.length);
-
+ 
+        const carts = await cartSchema.find({ user: userId }).select('_id')
+        const cartIds = carts.map((c) => c._id)
+ 
+        const orders = await orderSchema
+            .find({ cart: { $in: cartIds } })
+            .sort({ order_dt: -1 })
+            .populate({
+                path: 'cart',
+                populate: [
+                    { path: 'user', select: 'name email phone' },
+                    { path: 'items.product', select: 'name price images discountedPrice' },
+                ],
+            })
+ 
         res.status(200).json({
-            data: filteredOrders,
-            message: "User orders retrieved successfully"
-        });
+            data: orders,
+            message: 'User orders retrieved successfully',
+        })
     } catch (err) {
-        console.error('Error in getUserOrders:', err);
-        res.status(500).json({
-            message: "Server Error",
-            error: err.message,
-        });
+        console.error('Error in getUserOrders:', err)
+        res.status(500).json({ message: 'Server Error', error: err.message })
     }
-};
+}
 
 const updateOrderStatus = async (req, res) => {
     
@@ -645,7 +625,7 @@ const updateOrderStatus = async (req, res) => {
         ).populate({
             path: "cart",
             populate: [
-                { path: "user" },
+                { path: 'user', select: 'name email phone' },
                 { 
                     path: "items.product",
                     select: "name price images description slug category stock discountedPrice"
