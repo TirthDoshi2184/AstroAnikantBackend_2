@@ -3,6 +3,7 @@ const mailUtil = require("../service/MailUtil")
 const cartSchema = require("../models/Cart")
 const shipRocketService = require('../service/ShipRocket');
 const { sendingMail } = require("../service/MailUtil"); // Update the path
+const { default: mongoose } = require("mongoose");
 
 
 // ADD THIS IMPORT AT THE TOP OF YOUR CONTROLLER FILE
